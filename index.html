@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Pickleballträning med SideOut: kommande träningar, så anmäler du dig, nivåer och kontakt.">
+<title>SideOut Pickleball</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lexend:wght@600;700&display=swap">
+<style>
+/* Layout: en smal kolumn. Hero först, sedan i ordning: kommande träningar, hur du anmäler dig, nivåer, kontakt. */
+:root {
+  --bg: #FFFFFF;
+  --surface: #F3F5F7;
+  --fg: #0F1F2E;
+  --muted: #4A5B6A;
+  --navy: #123A56;
+  --hero-fg: #FFFFFF;
+  --link: #143E7E;
+  --lime: #9AC63D;
+  --on-lime: #0F1F2E;
+  --green: #548A3E;
+  --line: #DCE2E8;
+  --head: "Lexend", system-ui, sans-serif;
+  --body: "Inter", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0C1B28;
+    --surface: #142A3C;
+    --fg: #EEF2F6;
+    --muted: #A9B8C6;
+    --navy: #1B4D70;
+    --link: #8DB3EA;
+    --green: #B5DD5A;
+    --line: #2A4054;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0C1B28;
+  --surface: #142A3C;
+  --fg: #EEF2F6;
+  --muted: #A9B8C6;
+  --navy: #1B4D70;
+  --link: #8DB3EA;
+  --green: #B5DD5A;
+  --line: #2A4054;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 1rem/1.6 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 880px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--head); text-wrap: balance; line-height: 1.2; margin: 0; }
+h2 { font-size: 1.75rem; font-weight: 600; margin-bottom: 8px; }
+p { margin: 0; }
+a { color: var(--link); }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; }
+section { padding-block: 48px; }
+
+.eyebrow {
+  font-family: var(--head);
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+.lead { color: var(--muted); max-width: 60ch; margin-top: 8px; }
+
+/* Header */
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-block: 16px;
+}
+.logo-card { background: #FFFFFF; border-radius: 12px; padding: 6px 10px; line-height: 0; }
+.logo-card img { height: 56px; width: auto; max-width: 100%; display: block; }
+nav { display: flex; gap: 16px; flex-wrap: wrap; font-size: .95rem; }
+nav a { color: var(--fg); text-decoration: none; font-weight: 600; }
+nav a:hover { color: var(--green); }
+
+/* Hero */
+.hero {
+  background: var(--navy);
+  color: var(--hero-fg);
+  border-radius: 16px;
+  padding: 48px 24px;
+}
+.hero .eyebrow { color: var(--lime); }
+.hero h1 { font-size: clamp(2rem, 6vw, 3.25rem); font-weight: 700; margin-top: 8px; }
+.hero p { margin-top: 16px; font-size: 1.1rem; max-width: 52ch; opacity: .92; }
+.actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+.btn {
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font: 600 1rem/1.2 var(--body);
+  text-decoration: none;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+.btn-primary { background: var(--lime); color: var(--on-lime); }
+.btn-ghost { border-color: var(--hero-fg); color: var(--hero-fg); }
+.btn-primary:hover { filter: brightness(1.05); }
+
+/* Empty state for upcoming events */
+.empty {
+  background: var(--surface);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.empty strong { font-family: var(--head); font-weight: 600; }
+
+/* Steps: en riktig ordning, därför numrerat */
+.steps { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 12px; counter-reset: step; }
+.steps li {
+  counter-increment: step;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 16px;
+}
+.steps li::before {
+  content: counter(step);
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: var(--lime);
+  color: var(--on-lime);
+  font: 700 1rem/36px var(--head);
+  text-align: center;
+}
+.steps h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 4px; }
+.steps p { color: var(--muted); }
+.tip {
+  margin-top: 20px;
+  padding: 16px 20px;
+  border-left: 4px solid var(--lime);
+  background: var(--surface);
+  border-radius: 12px;
+}
+
+/* Levels */
+.grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-top: 20px; }
+.card {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.card .range { font-family: var(--head); font-weight: 700; color: var(--green); font-size: .9rem; }
+.card h3 { font-size: 1.1rem; font-weight: 600; }
+.card p { color: var(--muted); font-size: .95rem; }
+
+/* Contact */
+.contact { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 20px; }
+.contact .card { justify-content: space-between; }
+.addr { font-weight: 600; overflow-wrap: anywhere; color: var(--fg); }
+.copy {
+  align-self: flex-start;
+  margin-top: 8px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--fg);
+  font: 600 .9rem/1.2 var(--body);
+  cursor: pointer;
+}
+
+footer {
+  border-top: 1px solid var(--line);
+  padding-block: 24px 40px;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  section { scroll-margin-top: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <a class="logo-card" href="https://sideout.se" target="_blank" rel="noopener" aria-label="SideOut Pickleball, startsida">
+      <img src="logo.png" alt="SideOut Pickleball">
+    </a>
+    <nav aria-label="Huvudmeny">
+      <a href="#kommande">Träningar</a>
+      <a href="#sa-anmaler-du-dig">Anmäl dig</a>
+      <a href="#nivaer">Nivåer</a>
+      <a href="#kontakt">Kontakt</a>
+    </nav>
+  </header>
+
+  <section class="hero" style="padding-block: 48px;">
+    <p class="eyebrow">Pickleball med SideOut</p>
+    <h1>Utveckla ditt spel, steg för steg</h1>
+    <p>Träningar för alla nivåer, med fokus på tekniken, taktiken och att du ska ha roligt på banan. Här hittar du kommande pass och hur du anmäler dig.</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="#kommande">Se kommande träningar</a>
+      <a class="btn btn-ghost" href="#sa-anmaler-du-dig">Så anmäler du dig</a>
+    </div>
+  </section>
+
+  <section id="kommande" aria-labelledby="kommande-rubrik">
+    <p class="eyebrow">Träningar och event</p>
+    <h2 id="kommande-rubrik">Kommande träningar</h2>
+    <p class="lead">Nya pass och event läggs upp här så snart de är klara. Alla anmälningar görs i Court22.</p>
+    <div class="empty">
+      <strong>Inga träningar är publicerade just nu.</strong>
+      <p>Kontakta oss om du vill veta när nästa pass öppnar, eller titta i Court22 för att se bokningsbara tider i hallen.</p>
+      <div>
+        <a class="btn btn-primary" href="https://www.court22.com/sv" target="_blank" rel="noopener">Öppna Court22</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="sa-anmaler-du-dig" aria-labelledby="anmal-rubrik">
+    <p class="eyebrow">Så gör du</p>
+    <h2 id="anmal-rubrik">Så anmäler du dig</h2>
+    <p class="lead">Anmälan och betalning sker i Court22, som hallen använder. Det tar cirka fem minuter första gången.</p>
+    <ol class="steps">
+      <li>
+        <div>
+          <h3>Ladda ner appen Court22</h3>
+          <p>Finns för iPhone och Android. Du kan också använda court22.com i webbläsaren.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Skapa ett konto</h3>
+          <p>Ange namn, mejladress och mobilnummer.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Öppna länken till träningen</h3>
+          <p>Klicka på länken du fått från oss. Den tar dig direkt till rätt träning, så du slipper leta.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Anmäl dig och betala</h3>
+          <p>Tryck på Anmäl och betala i appen. Bokningen syns sedan i din kalender.</p>
+        </div>
+      </li>
+    </ol>
+    <div class="tip">
+      <strong>På plats:</strong> du kommer in i hallen med din personliga kod från Court22-appen.
+    </div>
+  </section>
+
+  <section id="nivaer" aria-labelledby="nivaer-rubrik">
+    <p class="eyebrow">För alla nivåer</p>
+    <h2 id="nivaer-rubrik">Vilken nivå passar dig?</h2>
+    <p class="lead">Osäker? Hör av dig så hjälper vi dig hitta rätt grupp.</p>
+    <div class="grid">
+      <article class="card">
+        <span class="range">1.0–2.0</span>
+        <h3>Nybörjare</h3>
+        <p>Du lär dig reglerna, poängräkningen och grundslagen.</p>
+      </article>
+      <article class="card">
+        <span class="range">2.5–3.0</span>
+        <h3>Fortsättning</h3>
+        <p>Du håller bollen i spel och börjar hitta fram till nätet.</p>
+      </article>
+      <article class="card">
+        <span class="range">3.5</span>
+        <h3>Medel</h3>
+        <p>Du har en stabil dink och väljer mellan drop och drive.</p>
+      </article>
+      <article class="card">
+        <span class="range">4.0+</span>
+        <h3>Avancerad</h3>
+        <p>Du spelar taktiskt, med tålamod och rätt attack.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="kontakt" aria-labelledby="kontakt-rubrik">
+    <p class="eyebrow">Hör av dig</p>
+    <h2 id="kontakt-rubrik">Kontakt</h2>
+    <p class="lead">Frågor om träningar, nivåer eller anmälan? Skriv till oss.</p>
+    <div class="contact">
+      <div class="card">
+        <h3>Kundservice</h3>
+        <p id="mejl" class="addr">kundservice@sideout.se</p>
+        <button class="copy" type="button" data-copy="kundservice@sideout.se" data-target="mejl">Kopiera adress</button>
+      </div>
+      <div class="card">
+        <h3>Vår webbplats</h3>
+        <p>Mer information om SideOut finns på sideout.se.</p>
+        <a href="https://sideout.se" target="_blank" rel="noopener">Besök sideout.se</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    SideOut Pickleball · Bokning via Court22 · sideout.se
+  </footer>
+</div>
+
+<script>
+document.querySelectorAll('[data-copy]').forEach(function (btn) {
+  var original = btn.textContent;
+  btn.addEventListener('click', function () {
+    var text = btn.getAttribute('data-copy');
+    var done = function () { btn.textContent = 'Kopierad'; setTimeout(function () { btn.textContent = original; }, 1800); };
+    var fallback = function () {
+      var el = document.getElementById(btn.getAttribute('data-target'));
+      var range = document.createRange();
+      range.selectNodeContents(el);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      btn.textContent = 'Markera och kopiera';
+    };
+    try {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } catch (e) {
+      fallback();
+    }
+  });
+});
+</script>
+</body>
+</html>
